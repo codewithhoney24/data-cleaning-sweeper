@@ -130,17 +130,13 @@ st.markdown(
 )
 
 # Create two columns
-col1, col2 = st.columns([1, 1])  # Equal width columns for better balance
+col1, col2 = st.columns([6, 6])  # Equal width columns for better balance
 
 with col1:
-    image_path = "public/mobile.png"
     try:
-        image = Image.open(image_path)
-        st.image(image, width=600)  # Adjusted width for better proportions
+        st.image("public/mobile.png")
     except FileNotFoundError:
-        st.error(f"Error: Image '{image_path}' not found!")
-    except Exception as e:
-        st.error(f"Error loading image: {str(e)}")
+        st.error("Image not found. Please check if 'public/mobile.png' exists in the correct location.")
 
 with col2:
     # Display title and description in the second column
