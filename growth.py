@@ -1,10 +1,12 @@
 
 
+import io
 import streamlit as st  # type: ignore
 import pandas as pd  # type: ignore
 import os
 from io import BytesIO
 import json 
+from PIL import Image # type: ignore
 
 
 
@@ -127,8 +129,15 @@ st.markdown(
 col1, col2 = st.columns([1, 100])  # Adjust width ratio as needed
 
 with col1:
-  image_path = os.path.join(os.getcwd(), "public", "mobile.png")  # Get full path
-st.image(image_path, width=600 )
+ image_path = "public/mobile.png"
+
+try:
+    with open(image_path, "rb") as file:
+        img_bytes = io.BytesIO(file.read())
+        st.image(img_bytes, width=600)
+except FileNotFoundError:
+    st.error(f"Error: Image '{image_path}' not found!")
+
 
 with col2:
     # Display title and description in the second column
