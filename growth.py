@@ -1,5 +1,3 @@
-
-
 import io
 import streamlit as st  # type: ignore
 import pandas as pd  # type: ignore
@@ -7,6 +5,12 @@ import os
 from io import BytesIO
 import json 
 from PIL import Image # type: ignore
+try:
+    import pdfkit  # type: ignore
+    PDFKIT_AVAILABLE = True
+except ImportError:
+    PDFKIT_AVAILABLE = False
+from tempfile import NamedTemporaryFile
 
 
 
@@ -97,7 +101,7 @@ st.markdown(
         .gradient-title {{
             font-size: 250px; /* Large but realistic font size */
             font-weight: bold;
-            text-align: right;
+            text-align: center;
             letter-spacing: 5px; /* Spacing for a premium look */
             background: linear-gradient(90deg, #00008B, #1E90FF, #800080, #FF00FF, #FF1493, #9400D3); 
             -webkit-background-clip: text;
@@ -111,7 +115,7 @@ st.markdown(
         .gradient-description {{
             font-size: 50px; /* Readable yet stylish */
             font-weight: bold;
-            text-align: right;
+            text-align: center;
             letter-spacing: 2px;
             background: linear-gradient(90deg, #4682B4, #87CEFA, #1E90FF, #00BFFF, #5F9EA0);
             -webkit-background-clip: text;
@@ -126,18 +130,17 @@ st.markdown(
 )
 
 # Create two columns
-col1, col2 = st.columns([1, 100])  # Adjust width ratio as needed
+col1, col2 = st.columns([1, 1])  # Equal width columns for better balance
 
 with col1:
- image_path = "public/mobile.png"
-
-try:
-    with open(image_path, "rb") as file:
-        img_bytes = io.BytesIO(file.read())
-        st.image(img_bytes, width=600)
-except FileNotFoundError:
-    st.error(f"Error: Image '{image_path}' not found!")
-
+    image_path = "public/mobile.png"
+    try:
+        image = Image.open(image_path)
+        st.image(image, width=600)  # Adjusted width for better proportions
+    except FileNotFoundError:
+        st.error(f"Error: Image '{image_path}' not found!")
+    except Exception as e:
+        st.error(f"Error loading image: {str(e)}")
 
 with col2:
     # Display title and description in the second column
@@ -282,13 +285,15 @@ if file:
 
     # Radio button for conversion selection
     conversion_type = st.radio(
-        "🔄 Choose Format:",  # Invisible label, since we're using custom text above
-        ["CSV", "Excel", "JSON", "Parquet", "HTML Table"], 
+        "🔄 Choose Format:",
+        ["CSV", "Excel", "JSON","pdf", "Parquet", "HTML Table"], 
         key=file.name
     )
 
     if st.button(f"Convert {file.name}"):
         buffer = BytesIO()
+        file_name = ""  # Initialize file_name variable
+        mime_type = "application/octet-stream"  # Default mime type
 
         if conversion_type == "CSV":
             df.to_csv(buffer, index=False)
@@ -301,16 +306,32 @@ if file:
             mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
         elif conversion_type == "PDF":
-        
-
-        
-               
-          
-            # Convert to bytes
-            
-            
-            file_name = file.name.replace(f".{file_ext}", ".pdf")
             mime_type = "application/pdf"
+            if not PDFKIT_AVAILABLE:
+                st.error("PDF conversion is not available. Please install pdfkit and wkhtmltopdf.")
+                st.info("Run: pip install pdfkit")
+                st.info("And install wkhtmltopdf from: https://wkhtmltopdf.org/downloads.html")
+                st.stop()
+                
+            # Convert DataFrame to HTML first
+            html = df.to_html(index=False)
+            
+            # Create a temporary HTML file
+            with NamedTemporaryFile(suffix='.html', delete=False) as f:
+                f.write(html.encode('utf-8'))
+                temp_html = f.name
+            
+            try:
+                # Convert HTML to PDF
+                pdf = pdfkit.from_file(temp_html, False)
+                buffer.write(pdf)
+            except Exception as e:
+                st.error(f"PDF conversion failed: {str(e)}")
+                st.info("Please ensure wkhtmltopdf is installed on your system.")
+            finally:
+                # Clean up temporary file
+                os.unlink(temp_html)
+            file_name = file.name.replace(f".{file_ext}", ".pdf")
 
         elif conversion_type == "JSON":
             buffer.write(df.to_json(orient="records").encode())
@@ -329,7 +350,7 @@ if file:
 
         buffer.seek(0)  # Reset buffer position
 
-        # Download button
+        # Move download button inside the conversion logic
         st.download_button(
             label=f"Download {file_name}",
             data=buffer,
