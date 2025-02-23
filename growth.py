@@ -133,10 +133,15 @@ st.markdown(
 col1, col2 = st.columns([6, 6])  # Equal width columns for better balance
 
 with col1:
+    # Replace direct image loading with a more robust approach
+    image_path = "public/mobile.png"
     try:
-        st.image("public/mobile.png")
-    except FileNotFoundError:
-        st.error("Image not found. Please check if 'public/mobile.png' exists in the correct location.")
+        # First try to load from the public directory
+        st.image(image_path)
+    except:
+        # If image loading fails, show a placeholder or message
+        st.info("📱 Mobile Data Sweeper Logo")
+        st.write("(Image placeholder - customize your app by adding an image at 'public/mobile.png')")
 
 with col2:
     # Display title and description in the second column
@@ -198,11 +203,6 @@ if uploaded_files:
         st.subheader("📊 Data Visualization")
         if st.checkbox(f"Show Visualization for {file_name}"):
             st.bar_chart(df.select_dtypes(include='number').iloc[:, :2], use_container_width=True, height=200)
-
-
-
-
-
 
 
 
