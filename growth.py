@@ -14,6 +14,8 @@ from tempfile import NamedTemporaryFile
 
 
 
+
+
  
 
 # Set page configuration
@@ -130,23 +132,17 @@ st.markdown(
 )
 
 # Create two columns
-col1, col2 = st.columns([6, 6])  # Equal width columns for better balance
+col1, col2 = st.columns([1, 1])  # Equal width columns for better balance
 
 with col1:
-    # Replace direct image loading with a more robust approach
+    image_path = "public/mobile.png"
     try:
-        # First try to load from the current directory
-        image = Image.open("mobile.png")
-        st.image(image)
-    except:
-        try:
-            # Then try the public directory
-            image = Image.open("public/mobile.png")
-            st.image(image)
-        except:
-            # If both attempts fail, show a placeholder
-            st.info("📱 Mobile Data Sweeper Logo")
-            st.write("Please ensure 'mobile.png' exists in either the current directory or the 'public' folder.")
+        image = Image.open(image_path)
+        st.image(image, width=600)  # Adjusted width for better proportions
+    except FileNotFoundError:
+        st.error(f"Error: Image '{image_path}' not found!")
+    except Exception as e:
+        st.error(f"Error loading image: {str(e)}")
 
 with col2:
     # Display title and description in the second column
