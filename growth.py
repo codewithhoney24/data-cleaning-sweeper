@@ -101,7 +101,7 @@ st.markdown(
         .gradient-title {{
             font-size: 250px; /* Large but realistic font size */
             font-weight: bold;
-            text-align: center;
+            text-align: left;
             letter-spacing: 5px; /* Spacing for a premium look */
             background: linear-gradient(90deg, #00008B, #1E90FF, #800080, #FF00FF, #FF1493, #9400D3); 
             -webkit-background-clip: text;
@@ -115,7 +115,7 @@ st.markdown(
         .gradient-description {{
             font-size: 50px; /* Readable yet stylish */
             font-weight: bold;
-            text-align: center;
+            text-align: left;
             letter-spacing: 2px;
             background: linear-gradient(90deg, #4682B4, #87CEFA, #1E90FF, #00BFFF, #5F9EA0);
             -webkit-background-clip: text;
