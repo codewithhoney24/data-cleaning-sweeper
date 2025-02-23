@@ -134,14 +134,19 @@ col1, col2 = st.columns([6, 6])  # Equal width columns for better balance
 
 with col1:
     # Replace direct image loading with a more robust approach
-    image_path = "public/mobile.png"
     try:
-        # First try to load from the public directory
-        st.image(image_path)
+        # First try to load from the current directory
+        image = Image.open("mobile.png")
+        st.image(image)
     except:
-        # If image loading fails, show a placeholder or message
-        st.info("📱 Mobile Data Sweeper Logo")
-        st.write("(Image placeholder - customize your app by adding an image at 'public/mobile.png')")
+        try:
+            # Then try the public directory
+            image = Image.open("public/mobile.png")
+            st.image(image)
+        except:
+            # If both attempts fail, show a placeholder
+            st.info("📱 Mobile Data Sweeper Logo")
+            st.write("Please ensure 'mobile.png' exists in either the current directory or the 'public' folder.")
 
 with col2:
     # Display title and description in the second column
