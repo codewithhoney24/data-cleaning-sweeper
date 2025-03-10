@@ -138,9 +138,12 @@ with col1:
 
 if os.path.exists(image_path):
     image = Image.open(image_path)  # Open the image
-    st.image(image, width=600)  # Display the image in Streamlit
+    st.image("https://i.postimg.cc/RCkbqwsJ/mobile.jpg", width=400)
+
 else:
     st.error(f"❌ Image not found! Path checked: {image_path}")
+
+
 
 
 
