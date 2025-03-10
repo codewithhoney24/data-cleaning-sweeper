@@ -1,4 +1,6 @@
 import io
+
+from PIL import Image
 import streamlit as st  # type: ignore
 import pandas as pd  # type: ignore
 import os
@@ -13,10 +15,6 @@ except ImportError:
 from tempfile import NamedTemporaryFile
 
 
-
-
-
- 
 
 # Set page configuration
 st.set_page_config(page_title="Mobile Data Sweeper", layout="wide")
@@ -135,14 +133,17 @@ st.markdown(
 col1, col2 = st.columns([1, 1])  # Equal width columns for better balance
 
 with col1:
-    image_path = "public/mobile.png"
-    try:
+   image_path = os.path.abspath("public/mobile.png")
+
+try:
+    if os.path.exists(image_path):  # Check if file exists
         image = Image.open(image_path)
-        st.image(image, width=600)  # Adjusted width for better proportions
-    except FileNotFoundError:
-        st.error(f"Error: Image '{image_path}' not found!")
-    except Exception as e:
-        st.error(f"Error loading image: {str(e)}")
+        st.image(image, width=600)  # Display image
+    else:
+        st.error(f"❌ Error: Image '{image_path}' not found! Please check the path.")
+except Exception as e:
+    st.error(f"⚠️ Error loading image: {str(e)}")
+
 
 with col2:
     # Display title and description in the second column
