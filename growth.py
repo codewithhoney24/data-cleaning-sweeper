@@ -133,16 +133,16 @@ st.markdown(
 col1, col2 = st.columns([1, 1])  # Equal width columns for better balance
 
 with col1:
-   image_path = os.path.abspath("public/mobile.png")
+   image_path = os.path.abspath("public/mobile.png") 
 
-try:
-    if os.path.exists(image_path):  # Check if file exists
-        image = Image.open(image_path)
-        st.image(image, width=600)  # Display image
-    else:
-        st.error(f"❌ Error: Image '{image_path}' not found! Please check the path.")
-except Exception as e:
-    st.error(f"⚠️ Error loading image: {str(e)}")
+
+if os.path.exists(image_path):
+    image = Image.open(image_path)  # Open the image
+    st.image(image, width=600)  # Display the image in Streamlit
+else:
+    st.error(f"❌ Image not found! Path checked: {image_path}")
+
+
 
 
 with col2:
