@@ -144,10 +144,6 @@ else:
     st.error(f"❌ Image not found! Path checked: {image_path}")
 
 
-
-
-
-
 with col2:
     # Display title and description in the second column
     st.markdown('<h1 class="gradient-title">📱 Mobile Data Sweeper</h1>', unsafe_allow_html=True)
